@@ -27,9 +27,9 @@ const opcoes = {
     // Sequelize fornece colunas de data com o timestamps
     
     // alterando para portugues
-    //createdAt: 'dataCriacao',
-    //updatedAt: 'dataAtualizacao',
-    //version: 'versao'
+    createdAt: 'dataCriacao',
+    updatedAt: 'dataAtualizacao',
+    version: 'versao'
 }
 
 module.exports = instancia.define('fornecedores', colunas, opcoes)
