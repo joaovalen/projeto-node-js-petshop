@@ -11,6 +11,7 @@ class Fornecedor {
     }
 
     async criar () {
+        this.validar()
         const resultado = await TabelaFornecedor.inserir({
             empresa: this.empresa,
             email: this.email,
@@ -57,6 +58,25 @@ class Fornecedor {
 
         await TabelaFornecedor.atualizar(this.id, dadosParaAtualizar)
     }
+
+    remover () {
+        return TabelaFornecedor.remover(this.id)
+    }
+
+    // validando campos que recebemos do usuário para o post
+    validar () {
+        const campos = ['empresa','email','categoria']
+
+        campos.forEach(campo => {
+            const valor = this[campo]
+
+            // || OU
+            if (typeof valor !== 'string' || valor.lenmght === 0) {
+                throw new Error(`O campo '${campo}' está inválido`)
+            }
+        })
+    }
+
 }
 
 module.exports = Fornecedor

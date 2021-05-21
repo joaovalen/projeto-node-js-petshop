@@ -31,6 +31,12 @@ module.exports = {
                 where: { id: id }
             }
         )
-    }
+    },
     // primeiro parametro são os dados para atualizar e o segundo um objeto com as instruções para encontrar a linha da tabela
+
+    remover (id) {
+        return Modelo.destroy({
+            where: {id: id}
+        })
+    }
 }
