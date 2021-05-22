@@ -1,6 +1,7 @@
 const roteador = require('express').Router()
 const TabelaFornecedor = require('./TabelaFornecedor')
 const Fornecedor = require('./Fornecedor')
+const NaoEncontrado = require('../../erros/NaoEncontrado')
 
 // como vamos nos comunicar com o banco, um serviço externo, é melhor usar promessas passando o async
 // Rota para Listar Fornecedores
@@ -44,7 +45,10 @@ roteador.get('/:idFornecedor', async (req,res) => {
 })
 
 // PUT
-roteador.put('/:idFornecedor', async (req, res) => {
+// DUVIDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+// Toda função que gera a resposta da requisição também recebe um terceiro parâmetro, o 
+// próximo meader que vai ser executado
+roteador.put('/:idFornecedor', async (req, res, proximo) => {
     try {
         const id = req.params.idFornecedor
         const dadosRecebidos = req.body
@@ -55,13 +59,9 @@ roteador.put('/:idFornecedor', async (req, res) => {
         res.status(204)
         // Sucesso mas não vamos dar nenhum conteúdo pro usuário
         res.end()
+        // Tratando 2 erros diferentes em uma mesma requisição =>
     } catch (erro) {
-        res.status(400)
-        res.send(
-            JSON.stringify({
-                mensagem: erro.message
-            })
-        )
+        proximo(erro)
     }
 })
 
@@ -76,6 +76,7 @@ roteador.delete('/:idFornecedor', async (req, res) => {
         res.status(204)
         res.end()
     } catch (erro) {
+        res.status(404)
         res.send(
             JSON.stringify({
                 mensagem: erro.message
