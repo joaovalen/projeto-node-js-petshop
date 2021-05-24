@@ -1,7 +1,6 @@
 const roteador = require('express').Router()
 const TabelaFornecedor = require('./TabelaFornecedor')
 const Fornecedor = require('./Fornecedor')
-const NaoEncontrado = require('../../erros/NaoEncontrado')
 
 // como vamos nos comunicar com o banco, um serviço externo, é melhor usar promessas passando o async
 // Rota para Listar Fornecedores
@@ -16,7 +15,8 @@ roteador.get('/', async (req,res) => {
 
 // Rota para criar fornecedor
 // POST
-roteador.post('/', async (req, res) => {
+// DUVIDA COMO QUE O MEADER FUNCIONA COM ESSE PROXIMO?
+roteador.post('/', async (req, res, proximo) => {
     try {
         const receivedData = req.body
         const fornecedor = new Fornecedor(receivedData)
@@ -25,13 +25,12 @@ roteador.post('/', async (req, res) => {
         res.send(JSON.stringify(fornecedor))
     } catch (erro) {
         // DUVIDA DE ONDE VEM A VARIÁVEL ERRO? É A QUE JOGAMOS NO THROW?
-        res.status(400)
-        res.send(JSON.stringify({mensagem: erro.message}))
+        proximo(erro)
     }
 })
 
 // Busca por ID
-roteador.get('/:idFornecedor', async (req,res) => {
+roteador.get('/:idFornecedor', async (req,res, proximo) => {
     try {
         const id = req.params.idFornecedor
         const fornecedor = new Fornecedor({ id: id})
@@ -39,8 +38,7 @@ roteador.get('/:idFornecedor', async (req,res) => {
         res.status(200)
         res.send(JSON.stringify(fornecedor))
     } catch (erro) {
-        res.status(404)
-        res.send(JSON.stringify({mensagem: erro.message}))
+        proximo(erro)
     }
 })
 
@@ -66,7 +64,7 @@ roteador.put('/:idFornecedor', async (req, res, proximo) => {
 })
 
 // DELETE
-roteador.delete('/:idFornecedor', async (req, res) => {
+roteador.delete('/:idFornecedor', async (req, res, proximo) => {
     try {
         const id = req.params.idFornecedor
         const fornecedor = new Fornecedor({id: id})
@@ -76,12 +74,7 @@ roteador.delete('/:idFornecedor', async (req, res) => {
         res.status(204)
         res.end()
     } catch (erro) {
-        res.status(404)
-        res.send(
-            JSON.stringify({
-                mensagem: erro.message
-            })
-        )
+        proximo(erro)
     }
 })
 

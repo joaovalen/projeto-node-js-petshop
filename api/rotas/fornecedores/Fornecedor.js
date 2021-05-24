@@ -1,4 +1,6 @@
 const TabelaFornecedor = require('./TabelaFornecedor')
+const CampoInvalido = require('../../erros/CampoInválido')
+const DadosNaoFornecidos = require('../../erros/DadosNaoFornecidos')
 
 class Fornecedor {
     constructor ({ id, empresa, email, categoria, dataCriacao, dataAtualizacao}) {
@@ -51,7 +53,7 @@ class Fornecedor {
         })
 
         if (Object.keys(dadosParaAtualizar).length === 0){
-            throw new Error("Não foram fornecidos dados para atualizar!")
+            throw new DadosNaoFornecidos()
         }
         // função que retorna lista com nome das chaves que o objeto possui
         // então com o .length podemos ver a quantidade de items da lista e se está vazia
@@ -71,8 +73,9 @@ class Fornecedor {
             const valor = this[campo]
 
             // || OU
-            if (typeof valor !== 'string' || valor.lenmght === 0) {
-                throw new Error(`O campo '${campo}' está inválido`)
+            if (typeof valor !== 'string' || valor.lenght === 0) {
+                // Aqui usamos nossa classe de erro para tratamento
+                throw new CampoInvalido(campo)
             }
         })
     }

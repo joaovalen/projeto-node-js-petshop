@@ -3,6 +3,9 @@ const app = express()
 const bodyParser = require('body-parser')
 const config = require('config')
 const NaoEncontrado = require('./erros/NaoEncontrado')
+const CampoInvalido = require('./erros/CampoInválido')
+const DadosNaoFornecidos = require('./erros/DadosNaoFornecidos')
+const ValorNaoSuportado = require('./erros/ValorNaoSuportado')
 
 app.use(bodyParser.json())
 
@@ -10,14 +13,25 @@ const roteador = require('./rotas/fornecedores')
 app.use('/api/fornecedores', roteador)
 
 // Criando um Meader para centralizar o tratamento de erros da nossa API
+// COMO ISSO FUNCIONA COMO QUE VEM PARAR AQUI?
 app.use((erro, req, res, proximo) => {
+    let status = 500
+
     if (erro instanceof NaoEncontrado) {
-        res.status(404)
+        status = 404
         // Caso não encontrado
-    } else {
-        res.status(400)
-        // Caso bad request
+    } 
+
+    if (erro instanceof CampoInvalido || erro instanceof DadosNaoFornecidos) {
+        status = 400
     }
+
+    if (erro instanceof ValorNaoSuportado) {
+        status = 406
+    }
+
+    res.status(status)
+
     res.send(
         JSON.stringify({
             mensagem: erro.message,
