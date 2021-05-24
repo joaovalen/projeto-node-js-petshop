@@ -6,7 +6,7 @@ const NaoEncontrado = require('../../erros/NaoEncontrado')
 module.exports = {
     // retornando os dados do banco de dados da nossa api
     listar () {
-        return Modelo.findAll() // método do sequelize para listar
+        return Modelo.findAll({raw: true}) // método do sequelize para listar
     },
 
     inserir (fornecedor) {

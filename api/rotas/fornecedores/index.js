@@ -1,6 +1,7 @@
 const roteador = require('express').Router()
 const TabelaFornecedor = require('./TabelaFornecedor')
 const Fornecedor = require('./Fornecedor')
+const SerializadorFornecedor = require('../../Serializador').SerializadorFornecedor
 
 // como vamos nos comunicar com o banco, um serviço externo, é melhor usar promessas passando o async
 // Rota para Listar Fornecedores
@@ -8,21 +9,29 @@ const Fornecedor = require('./Fornecedor')
 roteador.get('/', async (req,res) => {
     const resultados = await TabelaFornecedor.listar()
     res.status(200)
+    const serializador = new SerializadorFornecedor(
+        res.getHeader('Content-Type')
+    )
     res.send(
-        JSON.stringify(resultados)
+        serializador.serializar(resultados)
     )
 })
 
 // Rota para criar fornecedor
 // POST
-// DUVIDA COMO QUE O MEADER FUNCIONA COM ESSE PROXIMO?
+// DUVIDA COMO QUE O Middleware FUNCIONA COM ESSE PROXIMO?
 roteador.post('/', async (req, res, proximo) => {
     try {
         const receivedData = req.body
         const fornecedor = new Fornecedor(receivedData)
         await fornecedor.criar()
         res.status(201)
-        res.send(JSON.stringify(fornecedor))
+        const serializador = new SerializadorFornecedor(
+            res.getHeader('Content-Type')
+        )
+        res.send(
+            serializador.serializar(fornecedor)
+        )
     } catch (erro) {
         // DUVIDA DE ONDE VEM A VARIÁVEL ERRO? É A QUE JOGAMOS NO THROW?
         proximo(erro)
@@ -30,13 +39,20 @@ roteador.post('/', async (req, res, proximo) => {
 })
 
 // Busca por ID
-roteador.get('/:idFornecedor', async (req,res, proximo) => {
+roteador.get('/:idFornecedor', async (req, res, proximo) => {
     try {
         const id = req.params.idFornecedor
         const fornecedor = new Fornecedor({ id: id})
         await fornecedor.carregar()
         res.status(200)
-        res.send(JSON.stringify(fornecedor))
+        const serializador = new SerializadorFornecedor(
+            res.getHeader('Content-Type'),
+            // Pedindo os campos extras (sensitive info)
+            ['email','dataCriacao','dataAtualizacao','versao']
+        )
+        res.send(
+            serializador.serializar(fornecedor)
+        )
     } catch (erro) {
         proximo(erro)
     }
@@ -45,7 +61,7 @@ roteador.get('/:idFornecedor', async (req,res, proximo) => {
 // PUT
 // DUVIDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 // Toda função que gera a resposta da requisição também recebe um terceiro parâmetro, o 
-// próximo meader que vai ser executado
+// próximo middleware que vai ser executado
 roteador.put('/:idFornecedor', async (req, res, proximo) => {
     try {
         const id = req.params.idFornecedor
