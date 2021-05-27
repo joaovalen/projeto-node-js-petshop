@@ -1,3 +1,4 @@
+// rotas dos fornecedores
 const roteador = require('express').Router()
 const TabelaFornecedor = require('./TabelaFornecedor')
 const Fornecedor = require('./Fornecedor')
@@ -93,6 +94,24 @@ roteador.delete('/:idFornecedor', async (req, res, proximo) => {
         proximo(erro)
     }
 })
+
+// Rota de produtosm
+const roteadorProdutos = require('./produtos')
+
+const verificarFornecedor = async (req, res, next) => {
+    try {
+        const id = req.params.idFornecedor
+        const fornecedor = new Fornecedor({ id: id})
+        await fornecedor.carregar()
+        req.fornecedor = fornecedor
+        next()
+    } catch (erro) {
+        next(erro)
+    }
+}
+
+roteador.use('/:idFornecedor/produtos', verificarFornecedor, roteadorProdutos)
+// joga lá pro index de produtos e então pega as rotas get post etc de lá 
 
 module.exports = roteador
 
