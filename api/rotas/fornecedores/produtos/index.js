@@ -81,7 +81,7 @@ roteador.put('/:id', async (req, res, next) => {
    try {
         const dados = Object.assign(
             {},
-            req.body,
+            req.body, 
             {
                 id: req.params.id,
                 fornecedor: req.fornecedor.id
@@ -96,6 +96,24 @@ roteador.put('/:id', async (req, res, next) => {
         next(erro)
     }
     
+})
+
+// SELL POST
+roteador.post('/:id/sell', async (req, res, next) => {
+    try {
+        const produto = new Produto({
+            id: req.params.id,
+            fornecedor: req.fornecedor.id
+        })
+
+        await produto.carregar()
+        produto.estoque = produto.estoque - req.body.quantidade
+        await produto.sell()
+        res.status(204)
+        res.end()
+    } catch (erro) {
+        next(erro)
+    }
 })
 
 module.exports = roteador

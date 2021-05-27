@@ -79,8 +79,16 @@ class Produto {
                 fornecedor: this.fornecedor
             },
             dadosParaAtualizar
+        )   
+    }
+
+    sell () {
+        return Tabela.subtrair(
+            this.id,
+            this.fornecedor,
+            'estoque',
+            this.estoque
         )
-            
     }
 }
 

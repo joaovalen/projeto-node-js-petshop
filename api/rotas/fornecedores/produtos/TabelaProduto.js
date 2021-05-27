@@ -1,4 +1,5 @@
 const Modelo = require('./ModeloTabelaProduto')
+const instancia = require('../../../database')
 // aqui ficam as funções
 
 module.exports = {
@@ -44,5 +45,22 @@ module.exports = {
                 where: dadosDoProduto
             }
         )
+    },
+    subtrair (idProduto, idFornecedor, campo, quantidade) {
+        // usando a transaction para não rolar duas coisas ao mesmo tempo
+        return instancia.transaction(async transacao => {
+            const produto = await Modelo.findOne({
+                where: {
+                    id: idProduto,
+                    fornecedor: idFornecedor
+                }
+            })
+
+            produto[campo] = quantidade
+
+            await produto.save()
+
+            return produto
+        })
     }
 }
