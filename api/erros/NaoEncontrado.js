@@ -1,6 +1,6 @@
 class NaoEncontrado extends Error {
-    constructor() {
-        super('Fornecedor não foi encontrado')
+    constructor(nome) {
+        super(`${nome} não foi encontrado`)
         this.name = 'NaoEncontrado'
         this.idErro = 0
         // super chama o construtor da classe Error

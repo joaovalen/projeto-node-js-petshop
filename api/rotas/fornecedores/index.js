@@ -4,6 +4,14 @@ const TabelaFornecedor = require('./TabelaFornecedor')
 const Fornecedor = require('./Fornecedor')
 const SerializadorFornecedor = require('../../Serializador').SerializadorFornecedor
 
+// OPTIONS
+roteador.options('/', (req, res) => {
+    res.set('Access-Control-Allow-Methods', 'GET', 'POST')
+    res.set('Access-Control-Allow-Headers', 'Content-Type')
+    res.status(204)
+    res.end()
+})
+
 // como vamos nos comunicar com o banco, um serviço externo, é melhor usar promessas passando o async
 // Rota para Listar Fornecedores
 // GET
@@ -11,7 +19,7 @@ roteador.get('/', async (req,res) => {
     const resultados = await TabelaFornecedor.listar()
     res.status(200)
     const serializador = new SerializadorFornecedor(
-        res.getHeader('Content-Type')
+        res.getHeader('Content-Type'), ('empresa')
     )
     res.send(
         serializador.serializar(resultados)
@@ -28,7 +36,7 @@ roteador.post('/', async (req, res, proximo) => {
         await fornecedor.criar()
         res.status(201)
         const serializador = new SerializadorFornecedor(
-            res.getHeader('Content-Type')
+            res.getHeader('Content-Type'), ('empresa')
         )
         res.send(
             serializador.serializar(fornecedor)
@@ -37,6 +45,13 @@ roteador.post('/', async (req, res, proximo) => {
         // DUVIDA DE ONDE VEM A VARIÁVEL ERRO? É A QUE JOGAMOS NO THROW?
         proximo(erro)
     }
+})
+
+roteador.options('/:idFornecedor', (req, res) => {
+    res.set('Access-Control-Allow-Methods', 'GET', 'PUT', 'DELETE')
+    res.set('Access-Control-Allow-Headers', 'Content-Type')
+    res.status(204)
+    res.end()
 })
 
 // Busca por ID
@@ -49,7 +64,7 @@ roteador.get('/:idFornecedor', async (req, res, proximo) => {
         const serializador = new SerializadorFornecedor(
             res.getHeader('Content-Type'),
             // Pedindo os campos extras (sensitive info)
-            ['email','dataCriacao','dataAtualizacao','versao']
+            ['email','empresa','dataCriacao','dataAtualizacao','versao']
         )
         res.send(
             serializador.serializar(fornecedor)

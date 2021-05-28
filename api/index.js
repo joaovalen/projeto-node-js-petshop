@@ -33,8 +33,18 @@ app.use((req, res, proximo) => {
     proximo()
 })
 
+// liberando o acesso através de qualquer site
+app.use((req, res, next) => {
+    res.set('Access-Control-Allow-Origin', '*')
+    next()
+})
+
 const roteador = require('./rotas/fornecedores')
 app.use('/api/fornecedores', roteador)
+
+// Trocando para a versão 2
+const roteadorV2 = require('./rotas/fornecedores/rotas.v2')
+app.use('/api/v2/fornecedores', roteadorV2)
 
 // Criando um MiddleWare para centralizar o tratamento de erros da nossa API
 // COMO ISSO FUNCIONA COMO QUE VEM PARAR AQUI?

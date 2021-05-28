@@ -1,5 +1,6 @@
 const Modelo = require('./ModeloTabelaProduto')
 const instancia = require('../../../database')
+const NaoEncontrado = require('../../../erros/NaoEncontrado')
 // aqui ficam as funções
 
 module.exports = {
@@ -33,7 +34,7 @@ module.exports = {
         })
 
         if (!encontrado) {
-            throw new Error('Produto não foi encontrado!')
+            throw new NaoEncontrado('Produto')
         }
 
         return encontrado

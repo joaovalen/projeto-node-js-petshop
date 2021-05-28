@@ -1,6 +1,7 @@
 const TabelaProduto = require('./TabelaProduto')
 const Tabela = require('./TabelaProduto')
 const DadosNaoFornecidos = require('../../../erros/DadosNaoFornecidos')
+const CampoInvalido = require('../../../erros/CampoInválido')
 
 class Produto {
     constructor ({ id, titulo, preco, estoque, fornecedor, dataCriacao, dataAtualizacao, versao}) {
@@ -16,10 +17,10 @@ class Produto {
 
     validar () {
         if (typeof this.titulo !== 'string' || this.titulo.length === 0) {
-            throw new Error('O campo título está inválido')
+            throw new CampoInvalido('titulo')
         }
         if (typeof this.preco !== 'number' || this.preco <= 0){
-            throw new Error('O campo preço está inválido')
+            throw new CampoInvalido('preco')
         }
     }
 

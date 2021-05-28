@@ -21,7 +21,7 @@ module.exports = {
         })
 
         if (!encontrado) {
-            throw new NaoEncontrado()
+            throw new NaoEncontrado('Fornecedor')
             // lançando o erro "Não encontrado" que será capturado no catch do index caso ocorra 
             // fazemos isso quando temos mais de um tipo de erro possível em uma execução 
         }
